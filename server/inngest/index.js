@@ -23,7 +23,7 @@ const syncUserCreation = inngest.createFunction(
     }
 );
 
-k
+
 const syncUserDeletion = inngest.createFunction(
     { 
         id: "delete-user-with-clerk",
