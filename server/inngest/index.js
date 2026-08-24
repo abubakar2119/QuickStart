@@ -1,13 +1,17 @@
 import { Inngest } from "inngest";
 import User from "../Models/User.js";
 
+// Initialize Inngest Client
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
-// 1. User Creation
+// 1. User Creation Function
 const syncUserCreation = inngest.createFunction(
-    { id: "sync-user-from-clerk", name: "Sync User Creation" },
-    { event: "clerk/user.created" }, // Standard event object
-    async ({ event }) => {
+    { 
+        id: "sync-user-from-clerk",
+        name: "Sync User Creation",
+        triggers: [{ event: "clerk/user.created" }] // Pehle argument ke andar triggers array
+    },
+    async ({ event }) => { // Doosra argument sirf handler function
         const { id, first_name, last_name, email_addresses, image_url } = event.data;
         const userData = {
             _id: id,
@@ -19,20 +23,26 @@ const syncUserCreation = inngest.createFunction(
     }
 );
 
-// 2. User Deletion
+// 2. User Deletion Function
 const syncUserDeletion = inngest.createFunction(
-    { id: "delete-user-with-clerk", name: "Sync User Deletion" },
-    { event: "clerk/user.deleted" },
+    { 
+        id: "delete-user-with-clerk",
+        name: "Sync User Deletion",
+        triggers: [{ event: "clerk/user.deleted" }]
+    },
     async ({ event }) => {
         const { id } = event.data;
         await User.findByIdAndDelete(id);
     }
 );
 
-// 3. User Updation
+// 3. User Updation Function
 const syncUserUpdation = inngest.createFunction(
-    { id: "update-user-from-clerk", name: "Sync User Updation" },
-    { event: "clerk/user.updated" },
+    { 
+        id: "update-user-from-clerk",
+        name: "Sync User Updation",
+        triggers: [{ event: "clerk/user.updated" }]
+    },
     async ({ event }) => {
         const { id, first_name, last_name, email_addresses, image_url } = event.data;
         const userData = {
