@@ -9,9 +9,9 @@ const syncUserCreation = inngest.createFunction(
     { 
         id: "sync-user-from-clerk",
         name: "Sync User Creation",
-        triggers: [{ event: "clerk/user.created" }] // Pehle argument ke andar triggers array
+        triggers: [{ event: "clerk/user.created" }] 
     },
-    async ({ event }) => { // Doosra argument sirf handler function
+    async ({ event }) => { 
         const { id, first_name, last_name, email_addresses, image_url } = event.data;
         const userData = {
             _id: id,
@@ -23,7 +23,7 @@ const syncUserCreation = inngest.createFunction(
     }
 );
 
-// 2. User Deletion Function
+k
 const syncUserDeletion = inngest.createFunction(
     { 
         id: "delete-user-with-clerk",
@@ -35,7 +35,6 @@ const syncUserDeletion = inngest.createFunction(
         await User.findByIdAndDelete(id);
     }
 );
-
 // 3. User Updation Function
 const syncUserUpdation = inngest.createFunction(
     { 
