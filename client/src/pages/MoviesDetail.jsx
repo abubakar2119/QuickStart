@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { dummyDateTimeData, dummyShowsData } from "../assets/assets";
 import BlurCircle from "../components/BlurCircle";
 import { Heart, PlayCircleIcon, StarIcon } from "lucide-react";
 import MovieCard from "../components/MovieCard";
@@ -10,6 +9,7 @@ import Loading from "../components/Loading";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
+
 function MoviesDetail() {
   const navigate = useNavigate()
   const { id } = useParams();
@@ -18,8 +18,8 @@ function MoviesDetail() {
 image_base_url} = useAppContext()
 
   const getShow = async () => {
-    const show = dummyShowsData.find((show) => show._id === id);
-   try {
+    
+try {
     const {data} = await axios.get(`/api/show/${id}`)
     if(data.success)
       setShow(data)
@@ -44,14 +44,17 @@ image_base_url} = useAppContext()
     }
 }
   useEffect(() => {
+    
     getShow();
   }, [id]);
+
+ 
 
   return show? (
     <div className="px-6 md:px-16 lg:px-40 pt-[120px] md:pt-[200px]">
       <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto">
         <img
-          src={image_base_url + show.movie.poster_path}
+          src={image_base_url + show.movie?.poster_path}
           alt=""
           className="max-md:mx-auto
     rounded-xl h-[416px] max-w-[280px] object-cover"

@@ -32,6 +32,7 @@ const Dashboard = () => {
     const { data } = await axios.get("/api/admin/dashboard", {headers: {
     Authorization: `Bearer ${await getToken()}`}})
     if (data.success) {
+       console.log("ACTIVE SHOWS:", data.dashboardData.activeShows);
         setDashboardData(data.dashboardData)
         setLoading(false)
     }else{
@@ -73,7 +74,7 @@ const Dashboard = () => {
             <div className="relative flex flex-wrap gap-6 mt-4 max-w-5xl">
   <BlurCircle top="100px" left="-10%" />
   {dashboardData.activeShows.map((show) => (
-    <div key={show._id} className="w-55 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition duration-300">
+    <div key={show._id} className="w-[220px] rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition duration-300">
       <img src={image_base_url + show.movie.poster_path} alt='' className="h-60 w-full object-cover" />
       <p className="font-medium p-2 truncate">{show.movie.title}</p>
       <div className="flex items-center justify-between px-2">

@@ -99,7 +99,7 @@ const handleSubmit = async ()=>{
     if(user){
 fetchNowPlayingMovie();
     }
-  }, []);
+  }, [user]);
 
   return nowPlayingMovies.length > 0 ? (
     <>
@@ -173,6 +173,7 @@ fetchNowPlayingMovie();
     />
     <button
       onClick={handleDateTimeAdd}
+      disabled={addingShow}
       className="bg-primary/80 text-white px-3 py-2 text-sm rounded-lg hover:bg-primary cursor-pointer"
     >
       Add Time

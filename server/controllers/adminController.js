@@ -39,7 +39,7 @@ export const getAllShows = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.json({success: false, message: error.message})
-    }
+      }
 }
 
 // API to get all bookings
