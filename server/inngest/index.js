@@ -59,9 +59,12 @@ const syncUserUpdation = inngest.createFunction(
 export const releaseSeatsAndDeleteBooking = inngest.createFunction(
     {
         id: 'release-seats-delete-booking',
-        event: "app/checkpayment"
+        name:"Release seat",
+        triggers:[
+          {event: "app/checkpayment"}
+        ]
     },
-    async ({ event, step }) => {
+async ({ event, step }) => {
         const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
         await step.sleepUntil('wait-for-10-minutes', tenMinutesLater);
 
@@ -72,9 +75,9 @@ export const releaseSeatsAndDeleteBooking = inngest.createFunction(
 
             //If payment is not made,release seat and delete booking    
             if (!booking || booking.isPaid) {
-
+                return
             const show = await Show.findById(booking.show);
-                booking.bookedSeats.forEach(()=>{
+                booking.bookedSeats.forEach((seat)=>{
                     delete show.occupiedSeats[seat]
                 })
                 show.markModified("occupiedSeats")
