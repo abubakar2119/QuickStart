@@ -69,19 +69,20 @@ export const releaseSeatsAndDeleteBooking = inngest.createFunction(
             const bookingId = event.data.bookingId;
             const booking = await Booking.findById(bookingId);
 
-            if (!booking || booking.isPaid) return;
+
+            //If payment is not made,release seat and delete booking    
+            if (!booking || booking.isPaid) {
 
             const show = await Show.findById(booking.show);
-
-            if (show) {
-                booking.bookedSeats.forEach((seat) => {
-                    delete show.occupiedSeats[seat];
-                });
-                show.markModified("occupiedSeats");
-                await show.save();
+                booking.bookedSeats.forEach(()=>{
+                    delete show.occupiedSeats[seat]
+                })
+                show.markModified("occupiedSeats")
+                await show.save()
+                await Booking.findByIdAndDelete(booking._id)
             }
 
-            await Booking.findByIdAndDelete(booking._id);
+           
         });
     }
 );

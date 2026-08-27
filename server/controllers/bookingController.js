@@ -1,7 +1,7 @@
 import Show from "../models/Show.js"
 import Booking from "../models/Booking.js";
 import stripe from "stripe"
-// import { inngest } from "../inngest/index.js";
+import { inngest } from "../inngest/index.js";
 
 // Function to check availability of selected seats for a movie
 const checkSeatsAvailability = async (showId, selectedSeats)=>{
@@ -40,7 +40,9 @@ export const createBooking = async (req, res)=>{
             user: userId,
             show: showId,
             amount: showData.showPrice * selectedSeats.length,
-            bookedSeats: selectedSeats
+            bookedSeats: selectedSeats,
+            isPaid:false
+            
         })
 
         selectedSeats.map((seat)=>{
@@ -70,6 +72,7 @@ export const createBooking = async (req, res)=>{
             cancel_url:`${origin}/my-bookings`,
             line_items:line_items,
             mode:"payment",
+
             metadata:{
                 bookingId:booking._id.toString()
             },
@@ -78,13 +81,13 @@ export const createBooking = async (req, res)=>{
         booking.paymentLink = session.url
         await booking.save()
 
-// //Run inngest Shedule Function
-//         await inngest.send({
-//             name:"app/checkpayment",
-//             data:{
-                // bookingId:booking._id.toString()
-//             }
-//         })
+        //Run inngest Shedule Function
+        await inngest.send({
+            name:"app/checkpayment",
+            data:{
+                bookingId:booking._id.toString()
+            }
+        })
 
         res.json({success:true,url:session.url})
 
