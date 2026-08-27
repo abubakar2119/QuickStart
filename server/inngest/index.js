@@ -65,30 +65,62 @@ export const releaseSeatsAndDeleteBooking = inngest.createFunction(
         ]
     },
 async ({ event, step }) => {
-        const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
-        await step.sleepUntil('wait-for-10-minutes', tenMinutesLater);
 
-        await step.run('check-payment-status', async () => {
+    const tenMinutesLater = new Date(
+        Date.now() + 10 * 60 * 1000
+    );
+
+    await step.sleepUntil(
+        "wait-for-10-minutes",
+        tenMinutesLater
+    );
+
+    await step.run(
+        "check-payment-status",
+        async () => {
+
             const bookingId = event.data.bookingId;
-            const booking = await Booking.findById(bookingId);
 
+            const booking = await Booking.findById(
+                bookingId
+            );
 
-            //If payment is not made,release seat and delete booking    
+            // Booking doesn't exist
+            // OR payment has already been made
             if (!booking || booking.isPaid) {
-                return
-            const show = await Show.findById(booking.show);
-                booking.bookedSeats.forEach((seat)=>{
-                    delete show.occupiedSeats[seat]
-                })
-                show.markModified("occupiedSeats")
-                await show.save()
-                await Booking.findByIdAndDelete(booking._id)
+                return;
             }
 
-           
-        });
-    }
-);
+            // Find the show
+            const show = await Show.findById(
+                booking.show
+            );
+
+            if (!show) {
+                return;
+            }
+
+            // Release booked seats
+            booking.bookedSeats.forEach((seat) => {
+                delete show.occupiedSeats[seat];
+            });
+
+            // Tell Mongoose that occupiedSeats was modified
+            show.markModified("occupiedSeats");
+
+            await show.save();
+
+            // Delete unpaid booking
+            await Booking.findByIdAndDelete(
+                booking._id
+            );
+
+            console.log(
+                `Booking ${bookingId} deleted and seats released`
+            );
+        }
+    );
+})
 
 export const functions = [
     syncUserCreation,
