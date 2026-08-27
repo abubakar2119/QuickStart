@@ -161,6 +161,10 @@ const sendBookingConfirmationEmail = inngest.createFunction(
     }
 );
 
+
+
+
+
 export const functions = [
     syncUserCreation,
     syncUserDeletion,
